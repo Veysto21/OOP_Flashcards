@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>OOP Flashcards</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 20px; }
+    #card-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      grid-gap: 20px;
+    }
+    .flip-card {
+      background-color: transparent;
+      width: 200px;
+      height: 150px;
+      perspective: 1000px;
+      cursor: pointer;
+    }
+    .flip-card-inner {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      text-align: center;
+      transform-style: preserve-3d;
+      transition: transform 0.6s;
+    }
+    .flip-card-inner.flipped {
+      transform: rotateY(180deg);
+    }
+    .flip-card-front, .flip-card-back {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      backface-visibility: hidden;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 10px;
+      box-sizing: border-box;
+    }
+    .flip-card-front { background-color: #f0f0f0; }
+    .flip-card-back { background-color: #e0e0e0; transform: rotateY(180deg); }
+  </style>
+</head>
+<body>
+  <h1>OOP Flashcards</h1>
+  <div id="card-container"></div>
+  <script>
+    const cards = [
+      { term: 'Class', definition: 'Blueprint defining structure and behavior of objects.' },
+      { term: 'Object', definition: 'Instance of a class with specific attribute values and capabilities.' },
+      { term: 'Encapsulation', definition: 'Bundling data and methods, restricting direct access to internals.' },
+      { term: 'Inheritance', definition: 'Mechanism for a class to inherit attributes and methods from another class.' },
+      { term: 'Polymorphism', definition: 'Ability to treat objects of different types through a unified interface.' },
+      { term: 'Abstraction', definition: 'Hiding complex implementation details, exposing only necessary functionality.' },
+      { term: 'Constructor', definition: 'Special method called when an object is instantiated to initialize it.' },
+      { term: 'Destructor', definition: 'Method invoked when an object is garbage-collected or destroyed to free resources.' },
+      { term: 'Attribute (Field)', definition: 'Variable defined in a class representing data for objects.' },
+      { term: 'Method', definition: 'Function defined within a class representing object behavior.' },
+      { term: 'Access Modifier', definition: 'Keyword that controls visibility of classes, methods, and attributes.' },
+      { term: 'Method Overloading', definition: 'Defining multiple methods with the same name but different parameters.' },
+      { term: 'Method Overriding', definition: 'Subclass redefining a method inherited from its parent class.' },
+      { term: 'Interface', definition: 'Contract that specifies methods a class must implement.' },
+      { term: 'Abstract Class', definition: 'Class that cannot be instantiated and may contain abstract methods.' },
+      { term: 'Static Member', definition: 'Class-level attribute or method shared by all instances.' },
+      { term: 'Final', definition: 'Keyword indicating the item cannot be modified (class, method, or variable).' },
+      { term: 'Super', definition: 'Keyword referring to methods or constructors of the parent class.' },
+      { term: 'This', definition: 'Keyword referring to the current instance of the class.' },
+      { term: 'Association', definition: 'Relationship between two classes where one uses another.' },
+      { term: 'Aggregation', definition: 'Weak whole-part relationship; the part can exist independently.' },
+      { term: 'Composition', definition: 'Strong whole-part relationship; the part cannot exist without the whole.' },
+      { term: 'Coupling', definition: 'Degree of interdependence between modules.' },
+      { term: 'Cohesion', definition: 'Degree to which elements within a module belong together.' },
+      { term: 'UML', definition: 'Unified Modeling Language for visual system design.' },
+      { term: 'Package', definition: 'Namespace grouping related classes and interfaces.' },
+      { term: 'Extends', definition: 'Keyword indicating class inheritance from another class.' },
+      { term: 'Implements', definition: 'Keyword indicating a class fulfills an interface contract.' },
+      { term: 'Virtual Method', definition: 'Method whose implementation can be overridden in subclasses.' },
+      { term: 'Pure Virtual', definition: 'Abstract method without implementation in the base class.' },
+      { term: 'Namespace', definition: 'Container for identifiers to avoid naming collisions.' },
+      { term: 'Template', definition: 'C++ feature for generic programming parameterized by types.' },
+      { term: 'Generic', definition: 'Java/C# feature for type-safe parameterized classes and methods.' },
+      { term: 'Lambda Expression', definition: 'Anonymous function expression for concise code.' },
+      { term: 'Exception Handling', definition: 'Mechanism to manage runtime errors using try/catch/finally.' },
+      { term: 'Try-Catch', definition: 'Block to catch and handle exceptions thrown in try.' },
+      { term: 'Throw', definition: 'Statement to signal an exception has occurred.' },
+      { term: 'Finally', definition: 'Block executed after try/catch regardless of outcome.' },
+      { term: 'Static Polymorphism', definition: 'Compile-time polymorphism via overloading or templates.' },
+      { term: 'Dynamic Polymorphism', definition: 'Runtime polymorphism via overriding and virtual dispatch.' },
+      { term: 'Binding', definition: 'Association between method call and method body.' },
+      { term: 'Early Binding', definition: 'Compile-time binding of methods.' },
+      { term: 'Late Binding', definition: 'Runtime binding enabling dynamic method dispatch.' },
+      { term: 'SRP', definition: 'Single Responsibility Principle: a class should have one reason to change.' },
+      { term: 'OCP', definition: 'Open/Closed Principle: open for extension, closed for modification.' },
+      { term: 'LSP', definition: 'Liskov Substitution Principle: subclasses must substitute base classes without error.' },
+      { term: 'ISP', definition: 'Interface Segregation Principle: clients shouldn’t be forced to depend on unused methods.' },
+      { term: 'DIP', definition: 'Dependency Inversion Principle: depend on abstractions, not concretions.' },
+      { term: 'DRY', definition: 'Don’t Repeat Yourself: avoid code duplication.' },
+      { term: 'KISS', definition: 'Keep It Simple, Stupid: favor simplicity in design.' },
+      { term: 'YAGNI', definition: 'You Aren’t Gonna Need It: don’t add functionality until necessary.' },
+      { term: 'SOLID', definition: 'Acronym for five key object-oriented design principles.' },
+      { term: 'MVC', definition: 'Model-View-Controller architectural pattern.' },
+      { term: 'MVVM', definition: 'Model-View-ViewModel architectural pattern.' },
+      { term: 'MVP', definition: 'Model-View-Presenter architectural pattern.' },
+      { term: 'Singleton', definition: 'Pattern restricting a class to a single instance.' },
+      { term: 'Factory', definition: 'Pattern to create objects without specifying exact class.' },
+      { term: 'Observer', definition: 'Pattern where observers are notified of subject changes.' },
+      { term: 'Decorator', definition: 'Pattern for adding behavior to objects dynamically.' },
+      { term: 'Adapter', definition: 'Pattern allowing incompatible interfaces to work together.' },
+      { term: 'Facade', definition: 'Pattern providing a simplified interface to a complex subsystem.' },
+      { term: 'Strategy', definition: 'Pattern defining interchangeable algorithms.' },
+      { term: 'Command', definition: 'Pattern encapsulating requests as objects.' },
+      { term: 'State', definition: 'Pattern altering behavior when object internal state changes.' },
+      { term: 'Chain of Responsibility', definition: 'Pattern passing requests along a chain until handled.' },
+      { term: 'Builder', definition: 'Pattern constructing complex objects step by step.' },
+      { term: 'Prototype', definition: 'Pattern creating objects by cloning a prototype.' },
+      { term: 'Bridge', definition: 'Pattern decoupling abstraction from implementation.' },
+      { term: 'Flyweight', definition: 'Pattern reducing memory usage by sharing data.' },
+      { term: 'Proxy', definition: 'Pattern controlling access to another object via a surrogate.' },
+      { term: 'Composite', definition: 'Pattern composing objects into tree structures.' },
+      { term: 'Iterator', definition: 'Pattern providing sequential access to collection elements.' },
+      { term: 'Mediator', definition: 'Pattern defining simplified communication between objects.' },
+      { term: 'Memento', definition: 'Pattern capturing and restoring object internal state.' },
+      { term: 'Visitor', definition: 'Pattern separating algorithms from object structures.' },
+      { term: 'Dependency Injection', definition: 'Injecting dependencies into a class rather than creating them.' },
+      { term: 'Inversion of Control', definition: 'Design where framework manages the flow and calls into custom code.' },
+      { term: 'IoC Container', definition: 'Framework component providing dependency injection services.' },
+      { term: 'Event-Driven Programming', definition: 'Programming paradigm where flow is determined by events.' },
+      { term: 'Concurrency', definition: 'Ability to execute multiple tasks simultaneously.' },
+      { term: 'Thread Safety', definition: 'Ensuring correct behavior when accessed by multiple threads.' },
+      { term: 'Deadlock', definition: 'Condition where threads wait indefinitely for resources.' },
+      { term: 'Race Condition', definition: 'Error occurring when timing of threads affects behavior.' },
+      { term: 'Mutex', definition: 'Mutual exclusion object preventing concurrent access.' },
+      { term: 'Semaphore', definition: 'Synchronization primitive controlling access to resources.' },
+      { term: 'Garbage Collection', definition: 'Automatic memory reclamation of unused objects.' },
+      { term: 'Stack', definition: 'Memory region for static allocation and function calls.' },
+      { term: 'Heap', definition: 'Memory region for dynamic allocation.' },
+      { term: 'Recursion', definition: 'Technique where a function calls itself.' },
+      { term: 'Reflection', definition: 'Ability to inspect and modify program structure at runtime.' }
+    ];
+
+    const container = document.getElementById('card-container');
+    cards.forEach(({ term, definition }) => {
+      const card = document.createElement('div');
+      card.className = 'flip-card';
+      const inner = document.createElement('div');
+      inner.className = 'flip-card-inner';
+      const front = document.createElement('div');
+      front.className = 'flip-card-front';
+      front.textContent = term;
+      const back = document.createElement('div');
+      back.className = 'flip-card-back';
+      back.textContent = definition;
+      inner.appendChild(front);
+      inner.appendChild(back);
+      card.appendChild(inner);
+      card.addEventListener('click', () => inner.classList.toggle('flipped'));
+      container.appendChild(card);
+    });
+  </script>
+</body>
+</html>
