@@ -6,6 +6,8 @@
   <title>OOP Flashcards</title>
   <style>
     body { font-family: Arial, sans-serif; padding: 20px; }
+    #controls { margin-bottom: 20px; }
+    #shuffle-btn { padding: 10px 20px; font-size: 16px; cursor: pointer; }
     #card-container {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
@@ -26,9 +28,7 @@
       transform-style: preserve-3d;
       transition: transform 0.6s;
     }
-    .flip-card-inner.flipped {
-      transform: rotateY(180deg);
-    }
+    .flip-card-inner.flipped { transform: rotateY(180deg); }
     .flip-card-front, .flip-card-back {
       position: absolute;
       width: 100%;
@@ -48,9 +48,13 @@
 </head>
 <body>
   <h1>OOP Flashcards</h1>
+  <div id="controls">
+    <button id="shuffle-btn">Shuffle Cards</button>
+  </div>
   <div id="card-container"></div>
   <script>
-    const cards = [
+    // Base term/definition list
+    const baseCards = [
       { term: 'Class', definition: 'Blueprint defining structure and behavior of objects.' },
       { term: 'Object', definition: 'Instance of a class with specific attribute values and capabilities.' },
       { term: 'Encapsulation', definition: 'Bundling data and methods, restricting direct access to internals.' },
@@ -81,85 +85,78 @@
       { term: 'Implements', definition: 'Keyword indicating a class fulfills an interface contract.' },
       { term: 'Virtual Method', definition: 'Method whose implementation can be overridden in subclasses.' },
       { term: 'Pure Virtual', definition: 'Abstract method without implementation in the base class.' },
-      { term: 'Namespace', definition: 'Container for identifiers to avoid naming collisions.' },
-      { term: 'Template', definition: 'C++ feature for generic programming parameterized by types.' },
-      { term: 'Generic', definition: 'Java/C# feature for type-safe parameterized classes and methods.' },
-      { term: 'Lambda Expression', definition: 'Anonymous function expression for concise code.' },
-      { term: 'Exception Handling', definition: 'Mechanism to manage runtime errors using try/catch/finally.' },
-      { term: 'Try-Catch', definition: 'Block to catch and handle exceptions thrown in try.' },
-      { term: 'Throw', definition: 'Statement to signal an exception has occurred.' },
-      { term: 'Finally', definition: 'Block executed after try/catch regardless of outcome.' },
-      { term: 'Static Polymorphism', definition: 'Compile-time polymorphism via overloading or templates.' },
-      { term: 'Dynamic Polymorphism', definition: 'Runtime polymorphism via overriding and virtual dispatch.' },
-      { term: 'Binding', definition: 'Association between method call and method body.' },
-      { term: 'Early Binding', definition: 'Compile-time binding of methods.' },
-      { term: 'Late Binding', definition: 'Runtime binding enabling dynamic method dispatch.' },
-      { term: 'SRP', definition: 'Single Responsibility Principle: a class should have one reason to change.' },
-      { term: 'OCP', definition: 'Open/Closed Principle: open for extension, closed for modification.' },
-      { term: 'LSP', definition: 'Liskov Substitution Principle: subclasses must substitute base classes without error.' },
-      { term: 'ISP', definition: 'Interface Segregation Principle: clients shouldn’t be forced to depend on unused methods.' },
-      { term: 'DIP', definition: 'Dependency Inversion Principle: depend on abstractions, not concretions.' },
-      { term: 'DRY', definition: 'Don’t Repeat Yourself: avoid code duplication.' },
-      { term: 'KISS', definition: 'Keep It Simple, Stupid: favor simplicity in design.' },
-      { term: 'YAGNI', definition: 'You Aren’t Gonna Need It: don’t add functionality until necessary.' },
-      { term: 'SOLID', definition: 'Acronym for five key object-oriented design principles.' },
-      { term: 'MVC', definition: 'Model-View-Controller architectural pattern.' },
-      { term: 'MVVM', definition: 'Model-View-ViewModel architectural pattern.' },
-      { term: 'MVP', definition: 'Model-View-Presenter architectural pattern.' },
-      { term: 'Singleton', definition: 'Pattern restricting a class to a single instance.' },
-      { term: 'Factory', definition: 'Pattern to create objects without specifying exact class.' },
-      { term: 'Observer', definition: 'Pattern where observers are notified of subject changes.' },
-      { term: 'Decorator', definition: 'Pattern for adding behavior to objects dynamically.' },
-      { term: 'Adapter', definition: 'Pattern allowing incompatible interfaces to work together.' },
-      { term: 'Facade', definition: 'Pattern providing a simplified interface to a complex subsystem.' },
-      { term: 'Strategy', definition: 'Pattern defining interchangeable algorithms.' },
-      { term: 'Command', definition: 'Pattern encapsulating requests as objects.' },
-      { term: 'State', definition: 'Pattern altering behavior when object internal state changes.' },
-      { term: 'Chain of Responsibility', definition: 'Pattern passing requests along a chain until handled.' },
-      { term: 'Builder', definition: 'Pattern constructing complex objects step by step.' },
-      { term: 'Prototype', definition: 'Pattern creating objects by cloning a prototype.' },
-      { term: 'Bridge', definition: 'Pattern decoupling abstraction from implementation.' },
-      { term: 'Flyweight', definition: 'Pattern reducing memory usage by sharing data.' },
-      { term: 'Proxy', definition: 'Pattern controlling access to another object via a surrogate.' },
-      { term: 'Composite', definition: 'Pattern composing objects into tree structures.' },
-      { term: 'Iterator', definition: 'Pattern providing sequential access to collection elements.' },
-      { term: 'Mediator', definition: 'Pattern defining simplified communication between objects.' },
-      { term: 'Memento', definition: 'Pattern capturing and restoring object internal state.' },
-      { term: 'Visitor', definition: 'Pattern separating algorithms from object structures.' },
-      { term: 'Dependency Injection', definition: 'Injecting dependencies into a class rather than creating them.' },
-      { term: 'Inversion of Control', definition: 'Design where framework manages the flow and calls into custom code.' },
-      { term: 'IoC Container', definition: 'Framework component providing dependency injection services.' },
-      { term: 'Event-Driven Programming', definition: 'Programming paradigm where flow is determined by events.' },
-      { term: 'Concurrency', definition: 'Ability to execute multiple tasks simultaneously.' },
-      { term: 'Thread Safety', definition: 'Ensuring correct behavior when accessed by multiple threads.' },
-      { term: 'Deadlock', definition: 'Condition where threads wait indefinitely for resources.' },
-      { term: 'Race Condition', definition: 'Error occurring when timing of threads affects behavior.' },
-      { term: 'Mutex', definition: 'Mutual exclusion object preventing concurrent access.' },
-      { term: 'Semaphore', definition: 'Synchronization primitive controlling access to resources.' },
-      { term: 'Garbage Collection', definition: 'Automatic memory reclamation of unused objects.' },
-      { term: 'Stack', definition: 'Memory region for static allocation and function calls.' },
-      { term: 'Heap', definition: 'Memory region for dynamic allocation.' },
-      { term: 'Recursion', definition: 'Technique where a function calls itself.' },
-      { term: 'Reflection', definition: 'Ability to inspect and modify program structure at runtime.' }
+      { term: 'Package-Private', definition: 'Default access level; accessible only within its own package.' },
+      { term: 'Synchronized', definition: 'Keyword to control access to a method or block by multiple threads.' },
+      { term: 'Volatile', definition: 'Keyword ensuring visibility of changes to variables across threads.' },
+      { term: 'Transient', definition: 'Keyword indicating a field should not be serialized.' },
+      { term: 'Enum', definition: 'Special class representing a group of constants.' },
+      { term: 'Annotation', definition: 'Metadata added to Java code for compile-time or runtime processing.' },
+      { term: 'Static Initializer', definition: 'Block to initialize static fields when the class is loaded.' },
+      { term: 'Instance Initializer', definition: 'Block to initialize instance fields each time an object is created.' },
+      { term: 'Anonymous Class', definition: 'Class without a name used for instantiation and overriding on the fly.' },
+      { term: 'Inner Class', definition: 'Class defined within another class, with access to its members.' },
+      { term: 'Nested Static Class', definition: 'Static class defined within another class, no reference to instance.' },
+      { term: 'Varargs', definition: 'Syntax allowing methods to accept variable number of arguments.' },
+      { term: 'Try-With-Resources', definition: 'Statement automatically closing resources implementing AutoCloseable.' },
+      { term: 'Serializable', definition: 'Marker interface enabling object serialization to byte streams.' },
+      { term: 'Class Loader', definition: 'Component that loads classes into the JVM at runtime.' },
+      { term: 'Default Method', definition: 'Method in an interface that provides a default implementation.' },
+      { term: 'Functional Interface', definition: 'Interface with a single abstract method, usable with lambdas.' },
+      { term: 'Method Reference', definition: 'Compact lambda expression referring to an existing method by name.' },
+      { term: 'Stream API', definition: 'Fluent API for functional-style operations on collections.' },
+      { term: 'Optional', definition: 'Container object to represent presence or absence of a value.' },
+      { term: 'Module System', definition: 'Java 9+ feature for modularization using module-info.java.' },
+      { term: 'Record', definition: 'Immutable data carrier class with automatic constructor and accessors.' },
+      { term: 'Sealed Class', definition: 'Class restricting which other classes may extend it.' },
+      { term: 'Switch Expression', definition: 'Enhanced switch allowing expressions that return a value.' },
+      { term: 'Pattern Matching', definition: 'Java feature to test type and extract components in one step.' },
+      { term: 'Text Block', definition: 'Multi-line string literal for easier embedded text.' },
+      { term: 'Local Variable Type Inference', definition: 'Use `var` keyword to infer local variable types.' },
+      { term: 'Service Loader', definition: 'API to load service provider implementations at runtime.' }
     ];
 
-    const container = document.getElementById('card-container');
-    cards.forEach(({ term, definition }) => {
-      const card = document.createElement('div');
-      card.className = 'flip-card';
-      const inner = document.createElement('div');
-      inner.className = 'flip-card-inner';
-      const front = document.createElement('div');
-      front.className = 'flip-card-front';
-      front.textContent = term;
-      const back = document.createElement('div');
-      back.className = 'flip-card-back';
-      back.textContent = definition;
-      inner.appendChild(front);
-      inner.appendChild(back);
-      card.appendChild(inner);
-      card.addEventListener('click', () => inner.classList.toggle('flipped'));
-      container.appendChild(card);
+    // Add flipped state
+    const cards = baseCards.map(c => ({ ...c, flipped: false }));
+
+    function renderCards() {
+      const container = document.getElementById('card-container');
+      container.innerHTML = '';
+      cards.forEach(cardObj => {
+        const { term, definition, flipped } = cardObj;
+        const card = document.createElement('div');
+        card.className = 'flip-card';
+        const inner = document.createElement('div');
+        inner.className = 'flip-card-inner';
+        if (flipped) inner.classList.add('flipped');
+        const front = document.createElement('div');
+        front.className = 'flip-card-front';
+        front.textContent = term;
+        const back = document.createElement('div');
+        back.className = 'flip-card-back';
+        back.textContent = definition;
+        inner.append(front, back);
+        card.append(inner);
+        card.addEventListener('click', () => {
+          cardObj.flipped = !cardObj.flipped;
+          inner.classList.toggle('flipped');
+        });
+        container.append(card);
+      });
+    }
+
+    function shuffle(array) {
+      for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      renderCards();
+      document.getElementById('shuffle-btn').addEventListener('click', () => {
+        shuffle(cards);
+        renderCards();
+      });
     });
   </script>
 </body>
